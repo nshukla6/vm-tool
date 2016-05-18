@@ -1,0 +1,27 @@
+<html>
+	<head></head>
+	  <body>
+	  
+	   <table class="table table-striped">
+				 <thead>
+            <tr>
+              <th>Updates</th>
+            </tr>
+          </thead>
+
+
+					<% for(var i=0; i < data.length; i++) { %>
+					
+						<tr class="active">
+							<td class="success"><%= data[i].thetext %></td>
+						</tr>
+						
+						<% } %>
+				</table>
+
+	  
+
+
+</body>
+
+</html>

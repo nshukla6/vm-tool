@@ -13,8 +13,45 @@ exports.index = function(req, res){
 exports.search = function(req, res){
 	var bug=req.query.bug_id;
 	console.log("********"+bug);
-    res.render('home');
+var con = mysql.createConnection({
+  host: "bz3-m-db3.eng.vmware.com",
+  user: "mts",
+  password: "mts",
+  database: "bugzilla"
+});
+
+con.connect(function(err){
+  if(err){
+    console.log('Error connecting to Db');
+    return;
+  }
+  console.log('Connection established');
+});
+
+var query='select thetext from longdescs where bug_id= '+mysql.escape(bug);
+
+var data;
+
+con.query(query,function(err,rows){
+	if(err){
+		console.log("error="+err);
+	}
+	else if(rows){
+		data=rows;
+		console.log("data recieved")
+		console.log(rows);
+  
+  
+	}
+
+res.render('search',{data:data});
+	
+});
+
+con.end();
 };
+
+
 
 
 
@@ -51,28 +88,6 @@ var query='SELECT bug_id from bugs where product_id '+
 'JOIN products pr ON pr.id=b.found_in_product_id '+
 'JOIN versions v ON v.id=b.found_in_version_id '+
 'WHERE pr.name='+mysql.escape(product)+' and p.login_name= '+mysql.escape(user)+' and v.name= '+mysql.escape(version)+'))';
-
-
-var bug=1602178;
-var query1='select thetext from longdescs where bug_id= '+mysql.escape(bug);
-
-
-con.query(query1,function(err,rows){
-	if(err){
-		console.log("error="+err);
-	}
-	else if(rows){
-		
-console.log("data recieved")
- console.log(JSON.stringify(rows));
-  
-  
-	}
-	
-});
-
-
-
 
 
 var results;	
