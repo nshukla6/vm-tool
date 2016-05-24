@@ -44,7 +44,10 @@
        <div class="row">
           <div class="col-md-12">
                   <p class="" align="left">
-                     <%=product%>  <br> <%=email%> <br>    <%=version%>
+                     <%=product%>  <br> <%=email%> <br>    <%=version%> <br>
+					 <%map.forEach(function(value, key) {%>
+                     <%=key%>   <%=value%>
+                     <%});%>
 					
                   </p>
           </div>
@@ -63,6 +66,7 @@
             <tr>
               <th>Bug ID</th>
             </tr>
+			
           </thead>
 
 
