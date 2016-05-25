@@ -5,18 +5,23 @@
 	   <table class="table table-striped">
 				 <thead>
             <tr>
-              <th>Updates</th>
+              <th>child for Base: <%=base%></th>
             </tr>
           </thead>
 
-
-					<% for(var i=0; i < data.length; i++) { %>
-					
+					<%if(child.length>0){%>
+					<% for(var i=0; i < child.length; i++) { %>
+				
 						<tr class="active">
-							<td class="success"><%= data[i].thetext %></td>
+							<td class="success"><%= child[i].child %></td>
 						</tr>
 						
-						<% } %>
+						<% } } else {%>
+						<tr class="active">
+							<td class="success">No Child</td>
+						</tr>
+						<%}%>
+						
 				</table>
 
 	  

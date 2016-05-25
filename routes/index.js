@@ -1,6 +1,11 @@
 var mysql=require('mysql');
-var HashMap = require('hashmap');
-var map = new HashMap();
+
+var product;
+var email;
+var version;
+var bugs=[];
+var results;
+
 
 
 
@@ -12,7 +17,7 @@ exports.index = function(req, res){
 
 
 
-exports.search = function(req, res){
+exports.getChilds = function(req, res){
 	var bug=req.query.bug_id;
 	console.log("********"+bug);
 var con = mysql.createConnection({
@@ -30,7 +35,7 @@ con.connect(function(err){
   console.log('Connection established');
 });
 
-var query='select thetext from longdescs where bug_id= '+mysql.escape(bug);
+var query='select child from related where base='+mysql.escape(bug);
 
 var data;
 
@@ -46,7 +51,16 @@ con.query(query,function(err,rows){
   
 	}
 
-res.render('search',{data:data});
+res.render('result',
+				{child:data,
+				base:bug,
+				product:product,
+				email:email,
+				version:version,
+				result:results
+				}
+				
+				);
 	
 });
 
@@ -58,7 +72,7 @@ con.end();
 
 
 
-exports.query = function(req, res){
+exports.getBugs = function(req, res){
 var con = mysql.createConnection({
   host: "bz3-m-db3.eng.vmware.com",
   user: "mts",
@@ -74,24 +88,13 @@ con.connect(function(err){
   }
   console.log('Connection established');
 });
-	var product=req.body.product;
-	var email=req.body.email;
-	var version=req.body.version;
+	 product=req.body.product;
+	 email=req.body.email;
+	 version=req.body.version;
 	
 	var user=email.split("@")[0];
 	console.log("user===="+user)
 	
-var queryBase='select distinct base from related where '+
-'child in '+
-'( '+
-'SELECT bug_id FROM bugs b '+
-'JOIN profiles p ON p.userid=b.assigned_to '+
-'JOIN products pr ON pr.id=b.found_in_product_id '+
-'JOIN versions v ON v.id=b.found_in_version_id '+
-'WHERE pr.name='+mysql.escape(product)+' and p.login_name='+mysql.escape(user)+' and v.name='+mysql.escape(version)+
-' and b.resolution ="fixed" and b.bug_status in ("closed","resolved")'+
-')'
-
 
 var queryAll='SELECT bug_id FROM bugs b '+
 'JOIN profiles p ON p.userid=b.assigned_to '+
@@ -102,14 +105,9 @@ var queryAll='SELECT bug_id FROM bugs b '+
 
 
 
-
-
-
-
-
 	
-var results;
-var bugs=[];
+
+
 con.query(queryAll,function(err,rows){
   if(err){
   console.log("error="+err);
@@ -125,13 +123,13 @@ con.query(queryAll,function(err,rows){
   
 
   }
-  console.log(JSON.stringify(rows));
-  var map=my();
   res.render('result',{product:product,
 					 email:email,
 					 version:version,
 					 result:results,
-					 map:map
+					 child:'',
+					 base:''
+					
 									 
 					 });
 
@@ -140,51 +138,8 @@ con.query(queryAll,function(err,rows){
   }
   
 });
-
-childBug=[];
-normalBug=[];
-var index=0;
-
-function my(){
-
-for(var i=0;i<bugs.length;i++){
-	console.log("inside for loop "+bugs[i]);
-	var bug=bugs[i];
-var queryChild='select child from related where base='+mysql.escape(bugs[i]);
-
-con.query(queryChild,function(err,rows){
-	if(err){
-		console.log("queryChild error="+err);
-		res.render('error');
-		
-	}
-	console.log("for bug "+bug+"childs are="+JSON.stringify(rows)+"query="+queryChild);
-	if(rows.length>0){
-		
-	for(var j=0;j<rows.length;j++){
-	  childBug[j]=rows[j].child;
-
-  }
-  console.log("base bug="+bug);
-  map.set(bug,childBug);
-  console.log("setting key="+bug+" and value="+childBug);
-  
-		
-		
-	}
-	
-	map.forEach(function(value, key) {
-    console.log(key + " : " + value);
-});
-
-
-	
-	
-});
-
-}
 con.end();
-return map;
-}
+
+
 
 };

@@ -45,9 +45,7 @@
           <div class="col-md-12">
                   <p class="" align="left">
                      <%=product%>  <br> <%=email%> <br>    <%=version%> <br>
-					 <%map.forEach(function(value, key) {%>
-                     <%=key%>   <%=value%>
-                     <%});%>
+					 
 					
                   </p>
           </div>
@@ -73,16 +71,45 @@
 					<% for(var i=0; i < result.length; i++) { %>
 						<tr class="active">
 							<td class="success"><%= result[i].bug_id %></td>
-							<td><a href='/search?bug_id=<%=result[i].bug_id%>'>
+							<td><a href='/getChilds?bug_id=<%=result[i].bug_id%>'>
                 <span class="glyphicon glyphicon-asterisk"></span>
               </a></td>
      
 						</tr>
 						<% } %>
 				</table>
+				
+				
+				
+				<table class="table table-striped">
+				 <thead>
+            <tr>
+			<%if (base){%>
+              <th>child for Base: <%=base%></th>
+			  <%}%>
+            </tr>
+          </thead>
 
-                 
-               
+					<%if(child){%>
+					<% for(var i=0; i < child.length; i++) { %>
+				
+						<tr class="active">
+							<td class="success"><%= child[i].child %></td>
+						</tr>
+						
+						<% } } %>
+						
+						
+				</table>
+				
+				
+				
+				
+				
+				
+				
+				
+		
               </div>
               
               
